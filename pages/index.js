@@ -1,9 +1,17 @@
 import Head from 'next/head'
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
 import styles from '../public/styles/Home.module.scss'
+import { Chart } from 'primereact/chart';
+import states from '../assets/data';
+import studentData from '../assets/student_data';
 
 export default function Home() {
+
+
+
   return (
+
     <div className={styles.container}>
       <Head>
         <title>Create Next App</title>
@@ -12,12 +20,107 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-         <h1>Forever Young</h1>
+        <BarChartDemo />
       </main>
 
       <footer className={styles.footer}>
-        
+
       </footer>
+    </div>
+  )
+}
+
+
+
+const BarChartDemo = () => {
+
+  const [naija, setNaija] = useState([])
+
+
+  useEffect(() => {
+    setNaija(states.states)
+  }, [])
+
+
+  const countUnique = arr => {
+    const counts = {};
+    const arrayList = []
+    for (var i = 0; i < arr.length; i++) {
+      counts[arr[i]] = 1 + (counts[arr[i]] || 0);
+    };
+    for (let i in counts) {
+      arrayList.push(counts[i]);
+    }
+    return arrayList;
+  };
+
+
+
+
+  const basicData = {
+    labels: naija.map(e => (e.state.name)),
+    datasets: [
+      {
+        label: 'My First dataset',
+        backgroundColor: '#42A5F5',
+        data: countUnique(studentData.studentData)
+      },
+
+    ]
+  };
+
+
+
+  const getLightTheme = () => {
+
+    let horizontalOptions = {
+      indexAxis: 'y',
+      maintainAspectRatio: false,
+      aspectRatio: .8,
+      plugins: {
+        legend: {
+          labels: {
+            color: '#495057'
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            color: '#ebedef'
+          }
+        },
+        y: {
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            color: '#ebedef'
+          }
+        }
+      }
+    };
+
+
+
+    return {
+
+      horizontalOptions,
+    }
+  }
+
+  const { horizontalOptions } = getLightTheme();
+
+  return (
+    <div className={styles.card}>
+
+      <div className="card">
+        <h4>Students State Frequency Table </h4>
+        <Chart type="bar" data={basicData} options={horizontalOptions} height="900px" />
+      </div>
     </div>
   )
 }
